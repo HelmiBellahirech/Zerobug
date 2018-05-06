@@ -39,11 +39,15 @@ import java.util.Map;
  * @author OrbitG
  */
 public class DetailsCovoiturage extends BaseForm {
-
+public static String depart ;
+public static String arrive ; 
     ConnectionRequest connectionRequest;
 
     DetailsCovoiturage(Resources res, Covoiturage r) {
+        
         super(new BorderLayout());
+        depart = r.getDepart(); 
+        arrive = r.getArrive(); 
         Toolbar tb = new Toolbar(true);
         setToolbar(tb);
         tb.setUIID("Container");
@@ -64,6 +68,7 @@ ComboBox Combo =new ComboBox();
         Combo.addItem(lestypes[i]);
         }
         Button reserve =new Button("Reserver");
+        Button trajet = new Button("Trajet") ; 
         
         Button signUp = new Button("Sign Up");
         Button resend = new Button("Resend");
@@ -83,7 +88,8 @@ ComboBox Combo =new ComboBox();
                 new Label("Fumeur : " + r.getFumeur()),
                 new Label("Le : " + r.getDate()),
                 new Label("à : " + r.getHeure()),
-                new Label("Annonce publié le  : " + r.getDate_sys())
+                new Label("Annonce publié le  : " + r.getDate_sys()),
+                  BoxLayout.encloseX(trajet)
         );
         }
         else{
@@ -97,7 +103,8 @@ ComboBox Combo =new ComboBox();
                 new Label("Le : " + r.getDate()),
                 new Label("à : " + r.getHeure()),
                 new Label("Annonce publié le  : " + r.getDate_sys()),
-                   BoxLayout.encloseX(Combo,reserve)
+                   BoxLayout.encloseX(Combo,reserve),
+                   BoxLayout.encloseX(trajet)
         );
         }
         //*************
@@ -106,13 +113,15 @@ ComboBox Combo =new ComboBox();
           {
           ReservationCovService rc=new ReservationCovService();
          rc.ajoutReservation(Integer.valueOf(Combo.getSelectedItem().toString()),r.getID(),r.getID_USER(), Integer.valueOf(Session.getId()));
-         ToastBar.showMessage("Votre Reservation est en cours de traitement", FontImage.MATERIAL_INFO);
+         ToastBar.showMessage("Votre Reservation a été traiter", FontImage.MATERIAL_INFO);
           }
           else
           {
                Dialog.show("Erreur", "Nombre de places invalide", "Ok", null);
           }
       });
+     trajet.addActionListener(e -> {GoogleMapsTestApp  a=new   GoogleMapsTestApp();
+        a.start(res,r);});
         
         content.setScrollableY(true);
 
