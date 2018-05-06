@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class ReservSalle 
 {
-    private Integer id;
+    private int id;
     private String user ; 
     private int salle;
     private Date dateTime1;
@@ -25,7 +25,7 @@ public class ReservSalle
     private String stringdate1;
     private String stringdate2 ;
 
-    public ReservSalle(String user, int tsalle, String stringdate1, String stringdate2, int tnbr , int etat)
+    public ReservSalle(int id,String user, int tsalle, String stringdate1, String stringdate2, int tnbr , int etat)
     {
         this.user = user;
         this.salle = tsalle;
@@ -33,6 +33,7 @@ public class ReservSalle
         this.stringdate2 = stringdate2;
         this.etat=etat;
         this.nbPersonnes=tnbr;
+        this.id=id;
        
         
     }
@@ -139,11 +140,20 @@ public class ReservSalle
     public String getStringdate2() {
         return stringdate2;
     }
+
+    public void setStringdate1(String stringdate1) {
+        this.stringdate1 = stringdate1;
+    }
+
+    public void setStringdate2(String stringdate2) {
+        this.stringdate2 = stringdate2;
+    }
    
 
     public ReservSalle()
     {
     }
+    
    
 
     @Override

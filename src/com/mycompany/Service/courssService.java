@@ -10,11 +10,7 @@ import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
-import com.codename1.l10n.DateFormat;
-import com.codename1.l10n.ParseException;
-import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.events.ActionListener;
-import com.mycompany.Entite.ReservSalle;
 import com.mycompany.Entite.courss;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,21 +47,13 @@ public class courssService
                        cr.setMatiere(obj.get("matiere").toString());
                        cr.setFichier(obj.get("fichier").toString());
                      
-                        String date_pub=obj.get("date_pub").toString();
-                        
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd H:m");
-                        Date Datee = null ;
-                       
-                        try
-                        {
-                            Datee = format.parse(date_pub);
-                            
-                        }catch(ParseException ex)
-                        {
-                        System.out.println(ex.getMessage());
-                        }
-                        cr.setDate_pub(Datee);
-                        
+           
+                           Map<String, Object> dates = (Map<String, Object>) obj.get("datePub");
+                           float datesss = Float.parseFloat(dates.get("timestamp").toString());
+                           Date date_pub=new Date(( long)(datesss - 3600) *1000);    
+                           cr.setDate_pub(date_pub);
+                      
+//                        
 
                         listC.add(cr);
 

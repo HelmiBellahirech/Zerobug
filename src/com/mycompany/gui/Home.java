@@ -38,7 +38,7 @@ public class Home {
                 } catch (IOException ex) {}
             }
         });
-        f.getToolbar().addCommandToSideMenu("Cour",icon,new ActionListener() {
+        f.getToolbar().addCommandToSideMenu("Cours",icon,new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {

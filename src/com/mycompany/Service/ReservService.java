@@ -52,13 +52,40 @@ public class ReservService implements IntService<ReservSalle>
     @Override
     public void Delete(ReservSalle obj)
     {
-     
+     ConnectionRequest con = new ConnectionRequest();
+      String Url = "http://localhost/Entraide2.0/web/app_dev.php/revision/suppRes/"
+                +obj.getId();
+                
+        
+        con.setUrl(Url);
+
+        con.addResponseListener((e) -> {
+            String str = new String(con.getResponseData());
+            System.out.println(str);
+        });        
+        NetworkManager.getInstance().addToQueueAndWait(con);
     }
 
     @Override
     public void Update(ReservSalle obj)
     {
-    
+      ConnectionRequest con = new ConnectionRequest();
+      String Url = "http://localhost/Entraide2.0/web/app_dev.php/revision/modif/"
+                +obj.getUser()+"/"
+                +obj.getSalle()+"/"
+                +obj.getNbPersonnes()+"/"
+                +obj.getStringdate1()+"/"
+                +obj.getStringdate2()+"/"
+                +obj.getEtat()+"/"
+                +obj.getId();
+        
+        con.setUrl(Url);
+
+        con.addResponseListener((e) -> {
+            String str = new String(con.getResponseData());
+            System.out.println(str);
+        });        
+        NetworkManager.getInstance().addToQueueAndWait(con);
     }
     @Override
     public ArrayList<ReservSalle> getList() {
@@ -79,9 +106,9 @@ public class ReservService implements IntService<ReservSalle>
                     List<Map<String, Object>> list = (List<Map<String, Object>>) MesReserv.get("root");
                     for (Map<String, Object> obj : list) {
                         ReservSalle rev = new ReservSalle();
-
+                    float id=Float.parseFloat(obj.get("id").toString());                 
+                       rev.setId((int) id);
                        rev.setUser(obj.get("user").toString());
-
                       float nbr=Float.parseFloat(obj.get("salle").toString());
                       rev.setSalle((int) nbr);
                       float nbr1=Float.parseFloat(obj.get("nbPersonnes").toString());
