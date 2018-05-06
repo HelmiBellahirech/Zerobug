@@ -23,6 +23,7 @@ import static com.codename1.ui.Component.CENTER;
 import static com.codename1.ui.Component.LEFT;
 import static com.codename1.ui.Component.RIGHT;
 import com.codename1.ui.Container;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.Display;
 import com.codename1.ui.EncodedImage;
 import com.codename1.ui.FontImage;
@@ -42,6 +43,7 @@ import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.util.Resources;
+import com.mycompagny.Service.CovoiturageService;
 import com.mycompany.Entite.Covoiturage;
 import com.mycompany.Entite.Session;
 import java.io.IOException;
@@ -149,6 +151,8 @@ public class MesCovoiturage extends BaseForm{
             updateArrowPosition(barGroup.getRadioButton(barGroup.getSelectedIndex()), arrow);
         });
         // EncodedImage placeholder = EncodedImage.createFromImage(Image.createImage(100, 100, 0xffff0000), true);
+        
+        
         ConnectionRequest con = new ConnectionRequest();
         con.setUrl("http://localhost/PIDEV/Entraide2.0/web/app_dev.php/mobile/alluser/"+Session.getId()+"");
         con.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -159,9 +163,10 @@ public class MesCovoiturage extends BaseForm{
                 for (Covoiturage o : list) {
                     Storage.getInstance().clearStorage();
                     EncodedImage placeholder = EncodedImage.createFromImage(Image.createImage(100, 100, 0xffff0000), true);
-                    Image i = URLImage.createToStorage(placeholder, "S" + o.getDepart(), "http://localhost/PIDEV/Entraide2.0/web/eventupload/hh", URLImage.RESIZE_SCALE);
+                    Image i = res.getImage("cov3.jpg");
 
-                    addButton(i, o.getDepart(), false, 26, 32, res, o);
+                    addButton(i, "Depart : "+o.getDepart(), false, 26, 32, res, o);
+                    show();
                     System.out.println(o.getDepart());
 
                 }
@@ -169,7 +174,7 @@ public class MesCovoiturage extends BaseForm{
         });
         NetworkManager.getInstance().addToQueue(con);
    
-
+   show();
         
     }
 
@@ -189,48 +194,50 @@ public class MesCovoiturage extends BaseForm{
                 l.setDepart(obj.get("depart").toString());
                 l.setArrive(obj.get("arrive").toString());
                 l.setComfort(obj.get("comfort").toString());
+                
+                 l.setID((int)Float.parseFloat(obj.get("id").toString()));
+                
+             
+                l.setID_USER((int)Float.parseFloat(((LinkedHashMap) obj.get("idUser")).get("id").toString()));
+                
                 System.out.println(((LinkedHashMap) obj.get("date")).get("timestamp").toString());
 
-                String f1 = ((LinkedHashMap) obj.get("date")).get("timestamp").toString().substring(0, 1);
-                String f2 = ((LinkedHashMap) obj.get("date")).get("timestamp").toString().substring(2, 9);
-                String f3 = f1 + f2 + "00";
-                System.out.println(f3);
-                System.out.println(f3);
-                Long s1 = Long.parseLong(f3);
-                Long s2 = Long.parseLong("86400");
-                Long s3 = s1 + s2;
-                Long s4 = s3 * 1000;
-                System.out.println("**************" + s4);
-                //   System.out.println((Long)Long.parseLong(f3)*1000+24*3600);
-                Date d = new Date(s4);
-                DateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-                System.out.println(f.format(d));
-
-                String f11 = ((LinkedHashMap) obj.get("dateSys")).get("timestamp").toString().substring(0, 1);
-                String f22 = ((LinkedHashMap) obj.get("dateSys")).get("timestamp").toString().substring(2, 9);
-                String f33 = f11 + f22 + "00";
-                System.out.println(f33);
-                System.out.println(f33);
-                Long s11 = Long.parseLong(f33);
-                Long s22 = Long.parseLong("86400");
-                Long s33 = s11 + s22;
-                Long s44 = s33 * 1000;
-                System.out.println("**************" + s44);
-                //   System.out.println((Long)Long.parseLong(f3)*1000+24*3600);
-                Date d1 = new Date(s44);
+            
+               
+                double t=(double) ((LinkedHashMap) obj.get("date")).get("timestamp");
+                long d1=(long)(t*1000L);
+                
+                
+                  double t1=(double) ((LinkedHashMap) obj.get("dateSys")).get("timestamp");
+                long d2=(long)(t1*1000L);
+               
                 DateFormat f0 = new SimpleDateFormat("yyyy-MM-dd");
-                System.out.println(f.format(d));
-                l.setDate(f.format(d));
-                l.setDate_sys(f0.format(d1));
+               DateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+               
+                l.setDate(f.format(new Date(d1)));
+                l.setDate_sys(f0.format(new Date(d2)));
 //                l.setDate_sys(obj.get("date_sys").toString());
                 // l.setNbrPlaces(Integer.parseInt(String.valueOf(obj.get("nbrplaces"))));
                 l.setFumeur(obj.get("fumeur").toString());
                 System.out.println(((LinkedHashMap) obj.get("heure")).get("timestamp").toString());
-                String h = ((LinkedHashMap) obj.get("heure")).get("timestamp").toString().substring(0, 4);
-                long h1 = Long.parseLong(h);
+                
+                float h = Float.parseFloat(((LinkedHashMap) obj.get("heure")).get("timestamp").toString());
+                int x = (int) (h/3600) ; 
+                int y = (int)(60*(h/3600 - x )) ; 
                 SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-                String time = df.format(h1);
-                l.setHeure(time);
+                 x=x+1;
+                 String  x1;
+             if(x<10)
+             {
+                x1 = "0"+x ; 
+             }else x1=String.valueOf(x);
+             String y1;
+             if(y<10){
+                y1 = "0"+y; 
+             }else y1=String.valueOf(y);
+             
+                l.setHeure(x1+":"+y1);
+               
                 l.setPrix(Float.parseFloat(obj.get("prix").toString()));
                 float a = Float.parseFloat(obj.get("nbrplaces").toString());
                 l.setNbrPlaces((int) a);
@@ -295,10 +302,41 @@ public class MesCovoiturage extends BaseForm{
         Button image = new Button(img.fill(width, height));
         image.setUIID("Label");
         Container cnt = BorderLayout.west(image);
-        cnt.setLeadComponent(image);
+        //cnt.setLeadComponent(image);
         TextArea ta = new TextArea(title);
         ta.setUIID("NewsTopLine");
         ta.setEditable(false);
+        TextArea tv= new TextArea("Arrivé :"+l.getArrive());
+        tv.setUIID("NewsTopLine");
+        tv.setEditable(false);
+        
+         Label modif = new Label();
+        Style modifStyle = new Style(modif.getUnselectedStyle());
+        modifStyle.setFgColor(0x3d13a5);
+        FontImage modifImage = FontImage.createMaterial(FontImage.MATERIAL_EDIT, modifStyle);
+        modif.setIcon(modifImage);
+        modif.setTextPosition(RIGHT);
+        
+        modif.addPointerPressedListener(lv->{
+            
+            new ModifierCovoiturage(res,l).show();
+            
+        });
+        
+         Label supp = new Label();
+        Style suppStyle = new Style(supp.getUnselectedStyle());
+        suppStyle.setFgColor(0xa50d0d);
+        FontImage suppImage = FontImage.createMaterial(FontImage.MATERIAL_DELETE, suppStyle);
+        supp.setIcon(suppImage);
+        supp.setTextPosition(RIGHT);
+        
+        supp.addPointerPressedListener(lv->{
+             Dialog.show("confirmation", "Supprimer avec succés", "Ok", null);
+             CovoiturageService cs=new CovoiturageService();
+             cs.supprimer(l.getID());
+              new MesCovoiturage(res).show();
+        });
+        
 
         Label likes = new Label(likeCount + " Likes  ", "NewsBottomLine");
         likes.setTextPosition(RIGHT);
@@ -316,10 +354,13 @@ public class MesCovoiturage extends BaseForm{
         cnt.add(BorderLayout.CENTER,
                 BoxLayout.encloseY(
                         ta,
-                        BoxLayout.encloseX(likes, comments)
+                        tv,
+                        BoxLayout.encloseX(likes, comments),
+                        BoxLayout.encloseX(modif,supp)
                 ));
         add(cnt);
         image.addActionListener(e -> new DetailsCovoiturage(res, l).show()); //ToastBar.showMessage(title, FontImage.MATERIAL_INFO));
+         ta.addPointerPressedListener(e -> new DetailsCovoiturage(res, l).show());
     }
 
     private void bindButtonSelection(Button b, Label arrow) {

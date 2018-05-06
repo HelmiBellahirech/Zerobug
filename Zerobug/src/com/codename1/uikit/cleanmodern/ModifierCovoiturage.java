@@ -5,7 +5,6 @@
  */
 package com.codename1.uikit.cleanmodern;
 
-import com.mycompany.Entite.Covoiturage;
 import com.codename1.components.ScaleImageLabel;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
@@ -31,6 +30,8 @@ import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
+import com.mycompagny.Service.CovoiturageService;
+import com.mycompany.Entite.Covoiturage;
 import com.mycompany.Entite.Session;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,9 +43,9 @@ import java.util.Map;
  *
  * @author OrbitG
  */
-public class AjoutCovoiturage extends BaseForm {
-
-    public AjoutCovoiturage(Resources res) {
+public class ModifierCovoiturage extends BaseForm {
+    
+    public ModifierCovoiturage(Resources res,Covoiturage c) {
         super("Newsfeed", BoxLayout.y());
         Toolbar tb = new Toolbar(true);
         setToolbar(tb);
@@ -89,38 +90,49 @@ public class AjoutCovoiturage extends BaseForm {
 
         TextField depart = new TextField("");
         depart.setUIID("TextFieldBlack");
+        
+        depart.setText(c.getDepart());
 
         TextField arrive = new TextField("");
         arrive.setUIID("TextFieldBlack");
+        
+        arrive.setText(c.getArrive());
 
         TextField prix = new TextField("");
         prix.setUIID("TextFieldBlack");
+        prix.setText(String.valueOf(c.getPrix()));
 
        Picker heure = new Picker();
         heure.setType(Display.PICKER_TYPE_TIME);
         heure.setUIID("TextFieldBlack");
+        
+        heure.setText(c.getHeure());
 
         ComboBox nbr =new ComboBox();
         String[] lestypes={"1","2","3","4"};
         for (int i=0 ;i<4;i++){
         nbr.addItem(lestypes[i]);
         }
+        nbr.setSelectedItem(c.getNbrPlaces());
         
         Picker date = new Picker();
         date.setType(Display.PICKER_TYPE_DATE);
         date.setUIID("TextFieldBlack");
+        date.setText(c.getDate());
 
         Picker p = new Picker();
         p.setUIID("TextFieldBlack");
         p.setStrings(characters);
         p.setSelectedString("cliquez !");
         addStringValue("Comfort", p);
+        p.setText(c.getComfort());
 
         Picker p1 = new Picker();
         p1.setUIID("TextFieldBlack");
         p1.setStrings(characters2);
         p1.setSelectedString("cliquez !");
         addStringValue("Fumeur", p1);
+        p1.setText(c.getFumeur());
 
         addStringValueImage(res.getImage("tick.png"), "Depart", FlowLayout.encloseRightMiddle(depart));
         addStringValueImage(res.getImage("tick.png"), "Arrivé", FlowLayout.encloseRightMiddle(arrive));
@@ -130,7 +142,7 @@ public class AjoutCovoiturage extends BaseForm {
 
         addStringValueImage(res.getImage("tick.png"), "heure", FlowLayout.encloseRightMiddle(heure));
 
-        Button bn = new Button("Ajouter", res.getImage("next.png"));
+        Button bn = new Button("Modifier", res.getImage("next.png"));
 
         add(bn);
         bn.addActionListener(e -> {
@@ -146,17 +158,17 @@ public class AjoutCovoiturage extends BaseForm {
                 Dialog.show("Erreur", "verifier le prix", "Ok", null);
             
             }else{
-            l.setDepart(depart.getText());
-            l.setArrive(arrive.getText());
-            l.setPrix(Float.parseFloat(prix.getText()));
-            l.setNbrPlaces(Integer.parseInt(nbr.getSelectedItem().toString()));
+            c.setDepart(depart.getText());
+            c.setArrive(arrive.getText());
+            c.setPrix(Float.parseFloat(prix.getText()));
+            c.setNbrPlaces(Integer.parseInt(nbr.getSelectedItem().toString()));
             //l.setNbrSalleBain(Integer.parseInt(SDB.getText()));
-            l.setComfort(p.getSelectedString());
-            l.setFumeur(p1.getSelectedString());
+            c.setComfort(p.getSelectedString());
+            c.setFumeur(p1.getSelectedString());
             String s= date.getText();
             String sdate="20"+s.charAt(6)+s.charAt(7)+"-"+s.charAt(3)+s.charAt(4)+"-"+s.charAt(0)+s.charAt(1);
-            l.setDate(sdate);
-            l.setHeure(heure.getText());
+            c.setDate(sdate);
+            c.setHeure(heure.getText());
             System.out.println(heure.getText());
             String dateString = null;
             SimpleDateFormat sdfr = new SimpleDateFormat("yyyy-MM-dd");
@@ -164,14 +176,16 @@ public class AjoutCovoiturage extends BaseForm {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	Date datesys = new Date();
 	 //2016/11/16 12:08:43
+         c.setDate(dateString);
+         c.setDate_sys( dateFormat.format(datesys));
          
          {
+             CovoiturageService cv=new CovoiturageService();
+             cv.modifeir(c);
             
-            ConnectionRequest req = new ConnectionRequest();
-            req.setUrl("http://localhost/pidev2017/AjoutCovoiturage.php?depart=" + l.getDepart() + "&arrive=" + l.getArrive() + "&prix=" + l.getPrix() + "&date=" + dateString + "&datesys=" + dateFormat.format(datesys) + "&heure=" + l.getHeure() + "&nbplace=" + l.getNbrPlaces() + "&comfort=" + l.getComfort() + "&fumeur=" + l.getFumeur() + "&iduser=" + Session.getId()+"");
-            NetworkManager.getInstance().addToQueue(req);
-          Dialog.show("Confirmation", "Ajout avec succés", "Ok", null);
-            new AffichageCovoiturage(res).show();
+          Dialog.show("Confirmation", "Modification avec succés", "Ok", null);
+          
+            new MesCovoiturage(res).show();
          }
             }});
 
@@ -229,4 +243,5 @@ public class AjoutCovoiturage extends BaseForm {
         int diffInDays = (int) ((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24));
         return diffInDays;
     }
+    
 }
