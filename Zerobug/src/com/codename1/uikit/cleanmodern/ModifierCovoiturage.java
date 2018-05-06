@@ -118,21 +118,23 @@ public class ModifierCovoiturage extends BaseForm {
         Picker date = new Picker();
         date.setType(Display.PICKER_TYPE_DATE);
         date.setUIID("TextFieldBlack");
+      // date.setText(c.getDate());
+      
         date.setText(c.getDate());
-
+        
         Picker p = new Picker();
         p.setUIID("TextFieldBlack");
         p.setStrings(characters);
-        p.setSelectedString("cliquez !");
+        p.setSelectedString(c.getComfort());
         addStringValue("Comfort", p);
-        p.setText(c.getComfort());
+      
 
         Picker p1 = new Picker();
         p1.setUIID("TextFieldBlack");
         p1.setStrings(characters2);
-        p1.setSelectedString("cliquez !");
+        p1.setSelectedString(c.getFumeur());
         addStringValue("Fumeur", p1);
-        p1.setText(c.getFumeur());
+       
 
         addStringValueImage(res.getImage("tick.png"), "Depart", FlowLayout.encloseRightMiddle(depart));
         addStringValueImage(res.getImage("tick.png"), "Arrivé", FlowLayout.encloseRightMiddle(arrive));
