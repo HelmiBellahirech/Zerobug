@@ -43,7 +43,8 @@ import java.util.Map;
  * @author OrbitG
  */
 public class AjoutCovoiturage extends BaseForm {
-
+TextField depart; 
+TextField arrive; 
     public AjoutCovoiturage(Resources res) {
         super("Newsfeed", BoxLayout.y());
         Toolbar tb = new Toolbar(true);
@@ -87,10 +88,10 @@ public class AjoutCovoiturage extends BaseForm {
         etape1.setEditable(false);
         add(etape1);
 
-        TextField depart = new TextField("");
+         depart = new TextField("");
         depart.setUIID("TextFieldBlack");
 
-        TextField arrive = new TextField("");
+      arrive = new TextField("");
         arrive.setUIID("TextFieldBlack");
 
         TextField prix = new TextField("");
